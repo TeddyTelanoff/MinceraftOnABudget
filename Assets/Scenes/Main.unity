@@ -608,7 +608,7 @@ MonoBehaviour:
   speed: 50
   maxSpeed: 125
   jumpForce: 20
-  renderDistance: 3
+  renderDistance: 1
   turnSpeed: 5
 --- !u!54 &1307790861
 Rigidbody:

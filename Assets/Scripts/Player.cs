@@ -65,7 +65,7 @@ public class Player : Entity
         {
             rotation.x += Input.GetAxis("Mouse X") * turnSpeed;
             rotation.y += Input.GetAxis("Mouse Y") * turnSpeed;
-            rotation = new Vector2(rotation.x % 360, rotation.y % 360);
+            rotation = new Vector2(rotation.x % 360, Mathf.Clamp(rotation.y, -90, 90));
             transform.localRotation = Quaternion.Euler(new Vector3 { y = rotation.x });
             camera.transform.localRotation = Quaternion.Euler(new Vector3 { x = -rotation.y });
         }

@@ -19,8 +19,14 @@ public class ChunkGenerator : MonoBehaviour
 					Mathf.FloorToInt(Player.ClientPlayer.transform.position.y), Mathf.FloorToInt(Player.ClientPlayer.transform.position.z))).chunkPosition);
             }
 		foreach (Vector2Int chunkPosition in world.Chunks.Keys)
-        {
-
+		{
+			if (((chunkPosition.x >= Player.ClientPlayer.ChunkPosition.chunkPosition.x - Player.ClientPlayer.renderDistance) &&
+				(chunkPosition.x <= Player.ClientPlayer.ChunkPosition.chunkPosition.x + Player.ClientPlayer.renderDistance)) &&
+				((chunkPosition.y >= Player.ClientPlayer.ChunkPosition.chunkPosition.y - Player.ClientPlayer.renderDistance) &&
+				(chunkPosition.y <= Player.ClientPlayer.ChunkPosition.chunkPosition.y + Player.ClientPlayer.renderDistance)))
+				RenderChunk(chunkPosition);
+			else
+				DeRenderChunk(chunkPosition);
         }
 	}
 
@@ -41,7 +47,9 @@ public class ChunkGenerator : MonoBehaviour
 		for (int x = 0; x < world.ChunkSize.x; x++)
 			for (int z = 0; z < world.ChunkSize.z; z++)
 			{
-				int y = Mathf.FloorToInt(Mathf.Clamp(Mathf.PerlinNoise(world.noiseSeed + x * world.noiseStep, world.noiseSeed + z * world.noiseStep) * world.ChunkSize.y, 0, world.ChunkSize.y));
+				Vector3Int worldPosition = world.ChunkPositionToWorldPosition(position, new Vector3Int(x, 0, z));
+
+				int y = Mathf.FloorToInt(Mathf.Clamp(Mathf.PerlinNoise(world.noiseSeed + worldPosition.x * world.noiseStep, world.noiseSeed + worldPosition.z * world.noiseStep) * world.ChunkSize.y, 0, world.ChunkSize.y));
 				chunkObject.GetComponent<Chunk>().blocks[x, y, z].Type = Block.GRASS_BLOCK;
 			}
 		world.Chunks.Add(position, chunkObject.GetComponent<Chunk>());
@@ -64,7 +72,6 @@ public class ChunkGenerator : MonoBehaviour
 
 	public void DeRenderChunk(Vector2Int position)
 	{
-		if (world.Chunks[position].GetComponent<MeshFilter>().sharedMesh != null)
-			world.Chunks[position].DestroyMesh();
+		world.Chunks[position].DestroyMesh();
 	}
 }
