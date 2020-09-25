@@ -9,7 +9,8 @@ public class ChunkGenerator : MonoBehaviour
 	{
 		world = GetComponent<World>();
 
-		GenerateChunk(new Vector2Int(0, 0));
+		GenerateChunk(Vector2Int.zero);
+		RenderChunk(Vector2Int.zero);
 	}
 
 	public void GenerateChunk(Vector2Int position)
@@ -25,8 +26,13 @@ public class ChunkGenerator : MonoBehaviour
 			for (int z = 0; z < world.ChunkSize.z; z++)
 			{
 				int y = Mathf.FloorToInt(Mathf.Clamp(Mathf.PerlinNoise(world.noiseSeed + x * world.noiseStep, world.noiseSeed + z * world.noiseStep) * world.ChunkSize.y, 0, world.ChunkSize.y));
-				chunkObject.GetComponent<Chunk>().blocks[x, y, z].type = Block.GRASS_BLOCK;
+				chunkObject.GetComponent<Chunk>().blocks[x, y, z].Type = Block.GRASS_BLOCK;
 			}
-		chunkObject.GetComponent<Chunk>().GenerateMesh();
+		world.Chunks.Add(position, chunkObject.GetComponent<Chunk>());
+	}
+
+	public void RenderChunk(Vector2Int position)
+    {
+		world.Chunks[position].GenerateMesh();
 	}
 }
