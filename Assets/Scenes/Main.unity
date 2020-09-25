@@ -409,4 +409,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 878a1423e8919c84eb187b91996c6925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChunkSize: {x: 16, y: 16, z: 16}
+  ChunkSize: {x: 16, y: 32, z: 16}
+  noiseStep: 0.03
+  noiseSeed: 0

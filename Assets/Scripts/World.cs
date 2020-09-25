@@ -7,9 +7,12 @@ public class World : MonoBehaviour
 	public static World CurrentWorld;
 
 	public Vector3Int ChunkSize;
+    public float noiseStep;
+    public float noiseSeed;
 
 	public Dictionary<Vector2Int, Chunk> chunks { get; } = new Dictionary<Vector2Int, Chunk>();
 	public ChunkGenerator chunkGenerator { get; private set; }
+    
 
     private void Awake()
     {
