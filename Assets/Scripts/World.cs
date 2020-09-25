@@ -25,7 +25,7 @@ public class World : MonoBehaviour
 	public (Vector2Int chunkPosition, Vector3Int positionInChunk) WorldPositionToChunkPosition(Vector3Int worldPos)
 	{
 		Vector2Int chunkPosition = new Vector2Int(worldPos.x / ChunkSize.x - (worldPos.x % ChunkSize.x) / ChunkSize.x, worldPos.z / ChunkSize.z - (worldPos.z % ChunkSize.z) / ChunkSize.z);
-		Vector3Int positionInChunk = new Vector3Int(Mathf.Abs(worldPos.x % ChunkSize.x), Mathf.Abs(worldPos.y % ChunkSize.y), Mathf.Abs(worldPos.z % ChunkSize.z));
+		Vector3Int positionInChunk = new Vector3Int(worldPos.x % ChunkSize.x, worldPos.y, worldPos.z % ChunkSize.z);
 
 		return (chunkPosition, positionInChunk);
 	}

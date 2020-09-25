@@ -12,8 +12,8 @@ public class ChunkGenerator : MonoBehaviour
 
     private void FixedUpdate()
     {
-        for (int x = -Player.ClientPlayer.renderDistance; x < Player.ClientPlayer.renderDistance; x++)
-			for (int y = -Player.ClientPlayer.renderDistance; y < Player.ClientPlayer.renderDistance; y++)
+        for (int x = -Player.ClientPlayer.renderDistance - 1; x <= Player.ClientPlayer.renderDistance; x++)
+			for (int y = -Player.ClientPlayer.renderDistance - 1; y <= Player.ClientPlayer.renderDistance; y++)
             {
 				GenerateChunk(new Vector2Int(x, y) + world.WorldPositionToChunkPosition(new Vector3Int(Mathf.FloorToInt(Player.ClientPlayer.transform.position.x),
 					Mathf.FloorToInt(Player.ClientPlayer.transform.position.y), Mathf.FloorToInt(Player.ClientPlayer.transform.position.z))).chunkPosition);
@@ -51,6 +51,8 @@ public class ChunkGenerator : MonoBehaviour
 
 				int y = Mathf.FloorToInt(Mathf.Clamp(Mathf.PerlinNoise(world.noiseSeed + worldPosition.x * world.noiseStep, world.noiseSeed + worldPosition.z * world.noiseStep) * world.ChunkSize.y, 0, world.ChunkSize.y));
 				chunkObject.GetComponent<Chunk>().blocks[x, y, z].Type = Block.GRASS_BLOCK;
+				for (int by = 0; by < y; by++)
+					chunkObject.GetComponent<Chunk>().blocks[x, by, z].Type = Block.DIRT_BLOCK;
 			}
 		world.Chunks.Add(position, chunkObject.GetComponent<Chunk>());
 	}
