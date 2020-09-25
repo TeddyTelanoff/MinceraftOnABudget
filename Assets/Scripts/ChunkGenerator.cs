@@ -8,13 +8,27 @@ public class ChunkGenerator : MonoBehaviour
 	private void Awake()
 	{
 		world = GetComponent<World>();
-
-		GenerateChunk(Vector2Int.zero);
-		RenderChunk(Vector2Int.zero);
 	}
 
-	public void GenerateChunk(Vector2Int position)
+    private void FixedUpdate()
+    {
+        for (int x = -Player.ClientPlayer.renderDistance; x < Player.ClientPlayer.renderDistance; x++)
+			for (int y = -Player.ClientPlayer.renderDistance; y < Player.ClientPlayer.renderDistance; y++)
+            {
+				GenerateChunk(new Vector2Int(x, y) + world.WorldPositionToChunkPosition(new Vector3Int(Mathf.FloorToInt(Player.ClientPlayer.transform.position.x),
+					Mathf.FloorToInt(Player.ClientPlayer.transform.position.y), Mathf.FloorToInt(Player.ClientPlayer.transform.position.z))).chunkPosition);
+            }
+		foreach (Vector2Int chunkPosition in world.Chunks.Keys)
+        {
+
+        }
+	}
+
+    public void GenerateChunk(Vector2Int position)
 	{
+		if (world.Chunks.ContainsKey(position))
+			return;
+
 		GameObject chunkObject = new GameObject();
 		chunkObject.name = $"Chunk {position}";
 		chunkObject.layer = LayerMask.NameToLayer("Block");
@@ -33,8 +47,24 @@ public class ChunkGenerator : MonoBehaviour
 		world.Chunks.Add(position, chunkObject.GetComponent<Chunk>());
 	}
 
-	public void RenderChunk(Vector2Int position)
+	
+
+	public void GenerateChunkMesh(Vector2Int position)
     {
 		world.Chunks[position].GenerateMesh();
+	}
+	
+	public void RenderChunk(Vector2Int position)
+    {
+		if (world.Chunks[position].hasGenerated)
+			world.Chunks[position].ShowMesh();
+		else
+			world.Chunks[position].GenerateMesh();
+	}
+
+	public void DeRenderChunk(Vector2Int position)
+	{
+		if (world.Chunks[position].GetComponent<MeshFilter>().sharedMesh != null)
+			world.Chunks[position].DestroyMesh();
 	}
 }

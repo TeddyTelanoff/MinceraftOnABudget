@@ -14,6 +14,8 @@ public class Chunk : MonoBehaviour
 	public List<Vector3> vertices { get; private set; }
 	public List<int> triangles { get; private set; }
 	public List<Vector2> uv { get; private set; }
+	public bool hasGenerated { get; private set; }
+	public bool visible { get => GetComponent<MeshFilter>().sharedMesh != null; }
 
 	private void Awake()
 	{
@@ -31,8 +33,30 @@ public class Chunk : MonoBehaviour
 		uv = new List<Vector2>();
 	}
 
+	public void ShowMesh()
+    {
+		mesh.Clear();
+		mesh.vertices = vertices.ToArray();
+		mesh.triangles = triangles.ToArray();
+		mesh.uv = uv.ToArray();
+		mesh.RecalculateBounds();
+		mesh.RecalculateNormals();
+		mesh.RecalculateTangents();
+
+		GetComponent<MeshFilter>().sharedMesh = mesh;
+		GetComponent<MeshCollider>().sharedMesh = mesh;
+	}
+
+	public void DestroyMesh()
+    {
+		GetComponent<MeshFilter>().sharedMesh = null;
+		GetComponent<MeshCollider>().sharedMesh = null;
+	}
+
 	public void GenerateMesh()
 	{
+		hasGenerated = true;
+
 		for (int x = 0; x < Size.x; x++)
 			for (int y = 0; y < Size.x; y++)
 				for (int z = 0; z < Size.x; z++)
