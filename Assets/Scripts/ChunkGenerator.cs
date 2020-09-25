@@ -22,6 +22,7 @@ public class ChunkGenerator : MonoBehaviour
 
 		chunkObject.AddComponent<Chunk>().position = position;
 		chunkObject.GetComponent<MeshRenderer>().sharedMaterial = world.blockMaterial;
+		chunkObject.GetComponent<MeshCollider>().sharedMaterial = world.blockphysicsMaterial;
 
 		for (int x = 0; x < world.ChunkSize.x; x++)
 			for (int z = 0; z < world.ChunkSize.z; z++)

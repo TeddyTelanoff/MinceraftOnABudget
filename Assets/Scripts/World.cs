@@ -7,6 +7,7 @@ public class World : MonoBehaviour
 	public static World CurrentWorld;
 
 	public Material blockMaterial;
+	public PhysicMaterial blockphysicsMaterial;
 	public Vector3Int ChunkSize;
 	public float noiseStep;
 	public float noiseSeed;
