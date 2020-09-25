@@ -1,18 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Entity
 {
-    // Start is called before the first frame update
-    void Start()
+	public static Player ClientPlayer;
+
+    protected override void Awake()
     {
-        
+        base.Awake();
+
+        ClientPlayer = this;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }

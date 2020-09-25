@@ -22,7 +22,6 @@ public class Chunk : MonoBehaviour
 			for (int y = 0; y < Size.x; y++)
 				for (int z = 0; z < Size.x; z++)
 				{
-					blocks[x, y, z] = new Block();
 					blocks[x, y, z].Chunk = this;
 					blocks[x, y, z].PositionInChunk = new Vector3Int(x, y, z);
 				}
