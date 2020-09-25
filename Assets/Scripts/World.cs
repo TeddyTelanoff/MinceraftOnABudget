@@ -6,6 +6,7 @@ public class World : MonoBehaviour
 {
 	public static World CurrentWorld;
 
+	public Material blockMaterial;
 	public Vector3Int ChunkSize;
 	public float noiseStep;
 	public float noiseSeed;

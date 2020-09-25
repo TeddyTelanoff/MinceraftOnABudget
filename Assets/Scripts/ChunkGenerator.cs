@@ -21,6 +21,7 @@ public class ChunkGenerator : MonoBehaviour
 		chunkObject.transform.position = new Vector3Int(position.x, 0, position.y) * Chunk.Size;
 
 		chunkObject.AddComponent<Chunk>().position = position;
+		chunkObject.GetComponent<MeshRenderer>().sharedMaterial = world.blockMaterial;
 
 		for (int x = 0; x < world.ChunkSize.x; x++)
 			for (int z = 0; z < world.ChunkSize.z; z++)

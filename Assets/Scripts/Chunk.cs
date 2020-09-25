@@ -21,11 +21,11 @@ public class Chunk : MonoBehaviour
 		for (int x = 0; x < Size.x; x++)
 			for (int y = 0; y < Size.x; y++)
 				for (int z = 0; z < Size.x; z++)
-                {
+				{
 					blocks[x, y, z] = new Block();
 					blocks[x, y, z].Chunk = this;
 					blocks[x, y, z].PositionInChunk = new Vector3Int(x, y, z);
-                }
+				}
 		mesh = new Mesh();
 		vertices = new List<Vector3>();
 		triangles = new List<int>();
@@ -40,25 +40,26 @@ public class Chunk : MonoBehaviour
 					if (blocks[x, y, z].Type != Block.VOID)
 					{
 						Vector3Int blockPosition = new Vector3Int(x, y, z);
+						int blockType = blocks[x, y, z].Type;
 
 						// Front
 						if (IsVoid(World.CurrentWorld.ChunkPositionToWorldPosition(position, blockPosition) + Vector3.forward))
-							GenerateFace(blockPosition, Vector3.up, Vector3.right, false);
+							GenerateFace(blockType, blockPosition, Vector3.up, Vector3.right, false);
 						// Back
 						if (IsVoid(World.CurrentWorld.ChunkPositionToWorldPosition(position, blockPosition) - Vector3.forward))
-							GenerateFace(blockPosition - Vector3.forward, Vector3.up, Vector3.right, true);
+							GenerateFace(blockType, blockPosition - Vector3.forward, Vector3.up, Vector3.right, true);
 						// Left
 						if (IsVoid(World.CurrentWorld.ChunkPositionToWorldPosition(position, blockPosition) + Vector3.right))
-							GenerateFace(blockPosition + Vector3.right, Vector3.up, -Vector3.forward, false);
+							GenerateFace(blockType, blockPosition + Vector3.right, Vector3.up, -Vector3.forward, false);
 						// Right
 						if (IsVoid(World.CurrentWorld.ChunkPositionToWorldPosition(position, blockPosition) - Vector3.right))
-							GenerateFace(blockPosition, Vector3.up, -Vector3.forward, true);
+							GenerateFace(blockType, blockPosition, Vector3.up, -Vector3.forward, true);
 						// Top
 						if (IsVoid(World.CurrentWorld.ChunkPositionToWorldPosition(position, blockPosition) + Vector3.up))
-							GenerateFace(blockPosition + Vector3.up, -Vector3.forward, Vector3.right, false);
+							GenerateFace(blockType, blockPosition + Vector3.up, -Vector3.forward, Vector3.right, false);
 						// Bottom
 						if (IsVoid(World.CurrentWorld.ChunkPositionToWorldPosition(position, blockPosition) - Vector3.up))
-							GenerateFace(blockPosition, -Vector3.forward, Vector3.right, true);
+							GenerateFace(blockType, blockPosition, -Vector3.forward, Vector3.right, true);
 					}
 
 		mesh.Clear();
@@ -82,7 +83,7 @@ public class Chunk : MonoBehaviour
 		return World.CurrentWorld.Chunks[chunkPositions.chunkPosition].blocks[chunkPositions.positionInChunk.x, chunkPositions.positionInChunk.y, chunkPositions.positionInChunk.z].Type == Block.VOID;
 	}
 
-	public void GenerateFace(Vector3 position, Vector3 up, Vector3 right, bool reversed)
+	public void GenerateFace(int texture, Vector3 position, Vector3 up, Vector3 right, bool reversed)
 	{
 		int vertexStart = vertices.Count;
 
@@ -91,6 +92,12 @@ public class Chunk : MonoBehaviour
 		vertices.Add(corner + up);
 		vertices.Add(corner + up + right);
 		vertices.Add(corner + right);
+
+		Vector4 uvs = Block.TextureCoordinents[texture];
+		uv.Add(new Vector2(uvs.x, uvs.w));
+		uv.Add(new Vector2(uvs.x, uvs.y));
+		uv.Add(new Vector2(uvs.z, uvs.y));
+		uv.Add(new Vector2(uvs.z, uvs.w));
 
 		if (reversed)
 		{
