@@ -20,10 +20,10 @@ public class ChunkGenerator : MonoBehaviour
             }
 		foreach (Vector2Int chunkPosition in world.Chunks.Keys)
 		{
-			if (((chunkPosition.x >= Player.ClientPlayer.ChunkPosition.chunkPosition.x - Player.ClientPlayer.renderDistance) &&
-				(chunkPosition.x <= Player.ClientPlayer.ChunkPosition.chunkPosition.x + Player.ClientPlayer.renderDistance)) &&
-				((chunkPosition.y >= Player.ClientPlayer.ChunkPosition.chunkPosition.y - Player.ClientPlayer.renderDistance) &&
-				(chunkPosition.y <= Player.ClientPlayer.ChunkPosition.chunkPosition.y + Player.ClientPlayer.renderDistance)))
+			if (((chunkPosition.x >= Player.ClientPlayer.ChunkPosition.ChunkPosition.x - Player.ClientPlayer.renderDistance) &&
+				(chunkPosition.x <= Player.ClientPlayer.ChunkPosition.ChunkPosition.x + Player.ClientPlayer.renderDistance)) &&
+				((chunkPosition.y >= Player.ClientPlayer.ChunkPosition.ChunkPosition.y - Player.ClientPlayer.renderDistance) &&
+				(chunkPosition.y <= Player.ClientPlayer.ChunkPosition.ChunkPosition.y + Player.ClientPlayer.renderDistance)))
 				RenderChunk(chunkPosition);
 			else
 				DeRenderChunk(chunkPosition);

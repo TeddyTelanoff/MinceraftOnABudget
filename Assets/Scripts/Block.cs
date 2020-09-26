@@ -10,6 +10,13 @@ public struct Block
 		[GRASS_BLOCK] = new Vector4(0.25f, 1f, 0.5f, 0.75f),
 		[DIRT_BLOCK] = new Vector4(0.5f, 1f, 0.75f, 0.75f)
 	};
+	public static Block BlockAt(Vector3Int worldSpace)
+    {
+		var chunkSpace = World.CurrentWorld.WorldPositionToChunkPosition(worldSpace);
+		if (!World.CurrentWorld.Chunks.ContainsKey(chunkSpace.chunkPosition))
+			return new Block();
+		return World.CurrentWorld.Chunks[chunkSpace.chunkPosition].blocks[chunkSpace.positionInChunk.x, chunkSpace.positionInChunk.y, chunkSpace.positionInChunk.z];
+    }
 
 	public Chunk Chunk { get; set; }
 	public Vector3Int PositionInChunk { get; set; }
