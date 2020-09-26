@@ -70,6 +70,9 @@ public class Player : Entity
             camera.transform.localRotation = Quaternion.Euler(new Vector3 { x = -rotation.y });
         }
 
+        if (transform.position.y < -32)
+            transform.position = new Vector3(8, 32, 8);
+
         base.FixedUpdate();
     }
 }
