@@ -26,16 +26,16 @@ public class World : MonoBehaviour
 	{
 		Vector2Int chunkPosition = new Vector2Int(Mathf.FloorToInt((float)worldPos.x / ChunkSize.x - (float)(worldPos.x % ChunkSize.x) / ChunkSize.x),
 			Mathf.FloorToInt((float)worldPos.z / ChunkSize.z - (float)(worldPos.z % ChunkSize.z) / ChunkSize.z));
-		Vector3Int positionInChunk = new Vector3Int(Mathf.Abs(worldPos.x % ChunkSize.x), Mathf.Abs(worldPos.y), Mathf.Abs(worldPos.z % ChunkSize.z));
+		Vector3Int positionInChunk = new Vector3Int(worldPos.x % ChunkSize.x, worldPos.y, worldPos.z % ChunkSize.z);
 
-		/*if (positionInChunk.x < 0)
-			positionInChunk.x = ChunkSize.x - Mathf.Abs(positionInChunk.x);
-		if (positionInChunk.y < 0)
-			positionInChunk.y = ChunkSize.y - Mathf.Abs(positionInChunk.y);
-		if (positionInChunk.z < 0)
-			positionInChunk.z = ChunkSize.z - Mathf.Abs(positionInChunk.z);*/
+        if (positionInChunk.x < 0)
+            positionInChunk.x = ChunkSize.x - Mathf.Abs(positionInChunk.x);
+        if (positionInChunk.y < 0)
+            positionInChunk.y = ChunkSize.y - Mathf.Abs(positionInChunk.y);
+        if (positionInChunk.z < 0)
+            positionInChunk.z = ChunkSize.z - Mathf.Abs(positionInChunk.z);
 
-		return (chunkPosition, positionInChunk);
+        return (chunkPosition, positionInChunk);
 	}
 
 	public Vector3Int ChunkPositionToWorldPosition(Vector2Int chunkPosition, Vector3Int positionInChunk)

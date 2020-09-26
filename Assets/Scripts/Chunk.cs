@@ -99,7 +99,7 @@ public class Chunk : MonoBehaviour
 
 	public bool IsVoid(Vector3 worldPosition)
 	{
-		var chunkPositions = World.CurrentWorld.WorldPositionToChunkPosition(new Vector3Int((int)worldPosition.x, (int)worldPosition.y, (int)worldPosition.z));
+		var chunkPositions = World.CurrentWorld.WorldPositionToChunkPosition(new Vector3Int(Mathf.FloorToInt(worldPosition.x), Mathf.FloorToInt(worldPosition.y), Mathf.FloorToInt(worldPosition.z)));
 
 		if (!World.CurrentWorld.Chunks.ContainsKey(chunkPositions.chunkPosition))
 			return true;
