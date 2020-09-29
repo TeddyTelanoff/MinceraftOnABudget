@@ -11,14 +11,17 @@ public struct Block
 		[DIRT_BLOCK] = new Vector4(0.5f, 1f, 0.75f, 0.75f)
 	};
 	public static Block BlockAt(Vector3Int worldSpace)
-    {
-		var chunkSpace = World.CurrentWorld.WorldPositionToChunkPosition(worldSpace);
+	{
+		var chunkSpace = World.CurrentWorld.WorldSpaceToChunkSpace(worldSpace);
 		if (!World.CurrentWorld.Chunks.ContainsKey(chunkSpace.chunkPosition))
 			return new Block();
 		return World.CurrentWorld.Chunks[chunkSpace.chunkPosition].blocks[chunkSpace.positionInChunk.x, chunkSpace.positionInChunk.y, chunkSpace.positionInChunk.z];
-    }
+	}
+
+	public static Dictionary<Vector3Int, Block> blocks = new Dictionary<Vector3Int, Block>();
 
 	public Chunk Chunk { get; set; }
+	public Vector3Int Position { get; set; }
 	public Vector3Int PositionInChunk { get; set; }
 	public int Type { get; set; }
 }

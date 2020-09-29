@@ -1,79 +1,108 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 [RequireComponent(typeof(World))]
 public class ChunkGenerator : MonoBehaviour
 {
-	public World world { get; private set; }
+	public World World { get; private set; }
+
+	private List<Vector2Int> deRender { get; set; } = new List<Vector2Int>();
 
 	private void Awake()
 	{
-		world = GetComponent<World>();
+		World = GetComponent<World>();
 	}
 
-    private void FixedUpdate()
-    {
-        for (int x = -Player.ClientPlayer.renderDistance - 1; x <= Player.ClientPlayer.renderDistance; x++)
+	private void FixedUpdate()
+	{
+		for (int x = -Player.ClientPlayer.renderDistance - 1; x <= Player.ClientPlayer.renderDistance; x++)
 			for (int y = -Player.ClientPlayer.renderDistance - 1; y <= Player.ClientPlayer.renderDistance; y++)
-            {
-				GenerateChunk(new Vector2Int(x, y) + world.WorldPositionToChunkPosition(new Vector3Int(Mathf.FloorToInt(Player.ClientPlayer.transform.position.x),
-					Mathf.FloorToInt(Player.ClientPlayer.transform.position.y), Mathf.FloorToInt(Player.ClientPlayer.transform.position.z))).chunkPosition);
-            }
-		foreach (Vector2Int chunkPosition in world.Chunks.Keys)
-		{
-			if (((chunkPosition.x >= Player.ClientPlayer.ChunkPosition.ChunkPosition.x - Player.ClientPlayer.renderDistance) &&
-				(chunkPosition.x <= Player.ClientPlayer.ChunkPosition.ChunkPosition.x + Player.ClientPlayer.renderDistance)) &&
-				((chunkPosition.y >= Player.ClientPlayer.ChunkPosition.ChunkPosition.y - Player.ClientPlayer.renderDistance) &&
-				(chunkPosition.y <= Player.ClientPlayer.ChunkPosition.ChunkPosition.y + Player.ClientPlayer.renderDistance)))
-				RenderChunk(chunkPosition);
-			else
-				DeRenderChunk(chunkPosition);
-        }
-	}
-
-    public void GenerateChunk(Vector2Int position)
-	{
-		if (world.Chunks.ContainsKey(position))
-			return;
-
-		GameObject chunkObject = new GameObject();
-		chunkObject.name = $"Chunk {position}";
-		chunkObject.layer = LayerMask.NameToLayer("Block");
-		chunkObject.transform.position = new Vector3Int(position.x, 0, position.y) * Chunk.Size;
-
-		chunkObject.AddComponent<Chunk>().position = position;
-		chunkObject.GetComponent<MeshRenderer>().sharedMaterial = world.blockMaterial;
-		chunkObject.GetComponent<MeshCollider>().sharedMaterial = world.blockphysicsMaterial;
-
-		for (int x = 0; x < world.ChunkSize.x; x++)
-			for (int z = 0; z < world.ChunkSize.z; z++)
 			{
-				Vector3Int worldPosition = world.ChunkPositionToWorldPosition(position, new Vector3Int(x, 0, z));
+				if (!World.ActiveChunks.ContainsKey(new Vector2Int(x, y) + Player.ClientPlayer.ChunkSpace.ChunkPosition))
+				{
+					StartCoroutine(GenerateChunk(new Vector2Int(x, y) + Player.ClientPlayer.ChunkSpace.ChunkPosition));
 
-				int y = Mathf.FloorToInt(Mathf.Clamp(Mathf.PerlinNoise(world.noiseSeed + worldPosition.x * world.noiseStep, world.noiseSeed + worldPosition.z * world.noiseStep) * world.ChunkSize.y, 0, world.ChunkSize.y));
-				chunkObject.GetComponent<Chunk>().blocks[x, y, z].Type = Block.GRASS_BLOCK;
-				for (int by = 0; by < y; by++)
-					chunkObject.GetComponent<Chunk>().blocks[x, by, z].Type = Block.DIRT_BLOCK;
+					//if (World.Chunks.ContainsKey(new Vector2Int(x, y) + Player.ClientPlayer.ChunkSpace.ChunkPosition))
+						//StartCoroutine(RenderChunk(new Vector2Int(x, y) + Player.ClientPlayer.ChunkSpace.ChunkPosition));
+				}
 			}
-		world.Chunks.Add(position, chunkObject.GetComponent<Chunk>());
+
+		foreach (Vector2Int chunkPos in World.ActiveChunks.Keys)
+			if ((chunkPos.x < -Player.ClientPlayer.renderDistance - 1 || chunkPos.x > Player.ClientPlayer.renderDistance + 1) ||
+				(chunkPos.y < -Player.ClientPlayer.renderDistance - 1 || chunkPos.y > Player.ClientPlayer.renderDistance + 1))
+			{
+				deRender.Add(chunkPos);
+			}
+		for (int i = deRender.Count - 1; i >= 0; i--)
+        {
+			Vector2Int chunkPos = deRender[i];
+
+			World.ActiveChunks.Remove(chunkPos);
+			StartCoroutine(DeRenderChunk(chunkPos));
+
+			deRender.RemoveAt(i);
+		}
 	}
 
-	
-
-	public void GenerateChunkMesh(Vector2Int position)
-    {
-		world.Chunks[position].GenerateMesh();
-	}
-	
-	public void RenderChunk(Vector2Int position)
-    {
-		if (world.Chunks[position].hasGenerated)
-			world.Chunks[position].ShowMesh();
-		else
-			world.Chunks[position].GenerateMesh();
-	}
-
-	public void DeRenderChunk(Vector2Int position)
+	public IEnumerator GenerateChunk(Vector2Int position)
 	{
-		world.Chunks[position].DestroyMesh();
+		if (!World.Chunks.ContainsKey(position))
+		{
+			GameObject chunkObject = new GameObject();
+			chunkObject.name = $"Chunk {position}";
+			chunkObject.layer = LayerMask.NameToLayer("Block");
+			chunkObject.transform.position = new Vector3Int(position.x, 0, position.y) * Chunk.Size;
+
+			chunkObject.AddComponent<Chunk>().position = position;
+			chunkObject.GetComponent<MeshRenderer>().sharedMaterial = World.blockMaterial;
+			chunkObject.GetComponent<MeshCollider>().sharedMaterial = World.blockphysicsMaterial;
+
+			for (int x = 0; x < World.ChunkSize.x; x++)
+				for (int z = 0; z < World.ChunkSize.z; z++)
+				{
+					Vector3Int worldPosition = World.ChunkSpaceToWorldSpace(position, new Vector3Int(x, 0, z));
+
+					int y = Mathf.FloorToInt(Mathf.Clamp(Mathf.PerlinNoise(World.noiseSeed + worldPosition.x * World.noiseStep, World.noiseSeed + worldPosition.z * World.noiseStep) * World.ChunkGenerationHeight, 0, World.ChunkGenerationHeight));
+					chunkObject.GetComponent<Chunk>().blocks[x, y, z].Type = Block.GRASS_BLOCK;
+					for (int by = 0; by < y; by++)
+						chunkObject.GetComponent<Chunk>().blocks[x, by, z].Type = Block.DIRT_BLOCK;
+				}
+			if (!World.Chunks.ContainsKey(position))
+				World.Chunks.Add(position, chunkObject.GetComponent<Chunk>());
+			if (!World.ActiveChunks.ContainsKey(position))
+				World.ActiveChunks.Add(position, chunkObject.GetComponent<Chunk>());
+
+			StartCoroutine(RenderChunk(position));
+		}
+
+		yield return null;
+	}
+
+	
+
+	public IEnumerator GenerateChunkMesh(Vector2Int position)
+	{
+		World.Chunks[position].GenerateMesh();
+
+		yield return null;
+	}
+	
+	public IEnumerator RenderChunk(Vector2Int position)
+	{
+		if (World.Chunks[position].hasGenerated)
+			World.Chunks[position].ShowMesh();
+		else
+			World.Chunks[position].GenerateMesh();
+
+		yield return null;
+	}
+
+	public IEnumerator DeRenderChunk(Vector2Int position)
+	{
+		World.Chunks[position].DestroyMesh();
+		Debug.Log($"DeRendering {position}");
+
+		yield return null;
 	}
 }

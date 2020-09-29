@@ -24,7 +24,7 @@ public class Player : Entity
 	}
 
 	public Vector3Int WorldPosition { get => new Vector3Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y), Mathf.FloorToInt(transform.position.z)); }
-	public (Vector2Int ChunkPosition, Vector3Int PositionInChunk) ChunkPosition { get => World.CurrentWorld.WorldPositionToChunkPosition(WorldPosition); }
+	public (Vector2Int ChunkPosition, Vector3Int PositionInChunk) ChunkSpace { get => World.CurrentWorld.WorldSpaceToChunkSpace(WorldPosition); }
 
 	public bool LookingAtBlock { get; private set; }
 	public Vector3Int SelectedBlockWorldSpace { get; private set; }
@@ -61,7 +61,7 @@ public class Player : Entity
 		{
 			Vector3 point = hit.point + Vector3.one / 2 - hit.normal / 4;
 			SelectedBlockWorldSpace = new Vector3Int(Mathf.FloorToInt(point.x), Mathf.FloorToInt(point.y), Mathf.FloorToInt(point.z));
-			SelectedBlockChunkSpace = (hit.transform.GetComponent<Chunk>(), new Vector3Int(Mathf.Abs(SelectedBlockWorldSpace.x % Chunk.Size.x), Mathf.Abs(SelectedBlockWorldSpace.y % Chunk.Size.y), Mathf.Abs((SelectedBlockWorldSpace.z + 1) % Chunk.Size.z)));
+			SelectedBlockChunkSpace = (hit.transform.GetComponent<Chunk>(), World.CurrentWorld.WorldSpaceToChunkSpace(SelectedBlockWorldSpace).positionInChunk);
 
 			if (Input.GetMouseButtonDown(0) && SelectedBlockChunkSpace.Chunk)
 			{

@@ -34,21 +34,19 @@ public class Chunk : MonoBehaviour
 	}
 
 	public void ShowMesh()
-    {
+	{
 		mesh.Clear();
 		mesh.vertices = vertices.ToArray();
 		mesh.triangles = triangles.ToArray();
 		mesh.uv = uv.ToArray();
-		mesh.RecalculateBounds();
 		mesh.RecalculateNormals();
-		mesh.RecalculateTangents();
 
 		GetComponent<MeshFilter>().sharedMesh = mesh;
 		GetComponent<MeshCollider>().sharedMesh = mesh;
 	}
 
 	public void DestroyMesh()
-    {
+	{
 		GetComponent<MeshFilter>().sharedMesh = null;
 		GetComponent<MeshCollider>().sharedMesh = null;
 	}
@@ -70,22 +68,22 @@ public class Chunk : MonoBehaviour
 						int blockType = blocks[x, y, z].Type;
 
 						// Front
-						if (Block.BlockAt(World.CurrentWorld.ChunkPositionToWorldPosition(position, blockPosition) + new Vector3Int { z = 1 }).Type == Block.VOID)
+						if (blockPosition.z < Size.z - 1 && blocks[blockPosition.x, blockPosition.y, blockPosition.z + 1].Type == Block.VOID || blockPosition.z == Size.z - 1)
 							GenerateFace(blockType, blockPosition, Vector3.up, Vector3.right, false);
 						// Back
-						if (Block.BlockAt(World.CurrentWorld.ChunkPositionToWorldPosition(position, blockPosition) - new Vector3Int { z = 1 }).Type == Block.VOID)
+						if (blockPosition.z > 0 && blocks[blockPosition.x, blockPosition.y, blockPosition.z - 1].Type == Block.VOID || blockPosition.z == 0)
 							GenerateFace(blockType, blockPosition - Vector3.forward, Vector3.up, Vector3.right, true);
 						// Left
-						if (Block.BlockAt(World.CurrentWorld.ChunkPositionToWorldPosition(position, blockPosition) + new Vector3Int { x = 1 }).Type == Block.VOID)
+						if (blockPosition.x < Size.x - 1 && blocks[blockPosition.x + 1, blockPosition.y, blockPosition.z].Type == Block.VOID || blockPosition.x == Size.x - 1)
 							GenerateFace(blockType, blockPosition + Vector3.right, Vector3.up, -Vector3.forward, false);
 						// Right
-						if (Block.BlockAt(World.CurrentWorld.ChunkPositionToWorldPosition(position, blockPosition) - new Vector3Int { x = 1 }).Type == Block.VOID)
+						if (blockPosition.x > 0 && blocks[blockPosition.x - 1, blockPosition.y, blockPosition.z].Type == Block.VOID || blockPosition.x == 0)
 							GenerateFace(blockType, blockPosition, Vector3.up, -Vector3.forward, true);
 						// Top
-						if (Block.BlockAt(World.CurrentWorld.ChunkPositionToWorldPosition(position, blockPosition) + new Vector3Int { y = 1 }).Type == Block.VOID)
+						if (blockPosition.y < Size.y - 1 && blocks[blockPosition.x, blockPosition.y + 1, blockPosition.z].Type == Block.VOID || blockPosition.y == Size.y - 1)
 							GenerateFace(blockType, blockPosition + Vector3.up, -Vector3.forward, Vector3.right, false);
 						// Bottom
-						if (Block.BlockAt(World.CurrentWorld.ChunkPositionToWorldPosition(position, blockPosition) - new Vector3Int { y = 1 }).Type == Block.VOID)
+						if (blockPosition.y > 0 && blocks[blockPosition.x, blockPosition.y - 1, blockPosition.z].Type == Block.VOID || blockPosition.y == 0)
 							GenerateFace(blockType, blockPosition, -Vector3.forward, Vector3.right, true);
 					}
 

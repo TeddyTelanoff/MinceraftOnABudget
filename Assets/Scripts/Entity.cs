@@ -11,14 +11,14 @@ public class Entity : MonoBehaviour
 
 	protected virtual void Awake()
 	{
-        rb = GetComponent<Rigidbody>();
+		rb = GetComponent<Rigidbody>();
 		rb.drag = 5;
 		rb.constraints = RigidbodyConstraints.FreezeRotation;
 	}
 
 	protected virtual void FixedUpdate()
-    {
+	{
 		if (rb.velocity.magnitude > maxSpeed)
 			rb.velocity = rb.velocity / rb.velocity.magnitude * maxSpeed;
-    }
+	}
 }
